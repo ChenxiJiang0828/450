@@ -22,7 +22,7 @@ EMBEDDING_MODE = os.getenv("TSMRT_EMBEDDING_MODE", "remote")
 EMBEDDING_URL = os.getenv("TSMRT_EMBEDDING_URL", "http://10.12.7.83:50030").rstrip("/") + "/embed"
 EMBEDDING_MODEL = os.getenv("TSMRT_EMBEDDING_MODEL", "BAAI/bge-m3")
 EMBEDDING_DEVICE = os.getenv("TSMRT_EMBEDDING_DEVICE", "cuda")
-EMBEDDING_BACKEND = os.getenv("TSMRT_EMBEDDING_BACKEND", "flagembedding")
+EMBEDDING_BACKEND = os.getenv("TSMRT_EMBEDDING_BACKEND", "transformers")
 EMBEDDING_WORKERS = int(os.getenv("TSMRT_EMBEDDING_WORKERS", "20"))
 _LOCAL_MODEL = None
 
@@ -31,7 +31,16 @@ def _load_local_model():
     global _LOCAL_MODEL
     if _LOCAL_MODEL is None:
         print(f"[embedding] loading local model: {EMBEDDING_MODEL} on {EMBEDDING_DEVICE}, backend={EMBEDDING_BACKEND}")
-        if EMBEDDING_BACKEND == "flagembedding":
+        if EMBEDDING_BACKEND == "transformers":
+            import torch
+            from transformers import AutoModel, AutoTokenizer
+
+            tokenizer = AutoTokenizer.from_pretrained(EMBEDDING_MODEL)
+            model = AutoModel.from_pretrained(EMBEDDING_MODEL).to(EMBEDDING_DEVICE)
+            model.eval()
+            _LOCAL_MODEL = (tokenizer, model, torch.device(EMBEDDING_DEVICE))
+            print("[embedding] local transformers model ready")
+        elif EMBEDDING_BACKEND == "flagembedding":
             from FlagEmbedding import BGEM3FlagModel
 
             _LOCAL_MODEL = BGEM3FlagModel(
@@ -52,6 +61,22 @@ def get_embedding(text: str):
     """Return one normalized embedding from local model or remote API."""
     if EMBEDDING_MODE == "local":
         model = _load_local_model()
+        if EMBEDDING_BACKEND == "transformers":
+            import torch
+
+            tokenizer, encoder, device = model
+            encoded = tokenizer(
+                [text],
+                padding=True,
+                truncation=True,
+                max_length=512,
+                return_tensors="pt",
+            ).to(device)
+            with torch.no_grad():
+                outputs = encoder(**encoded, return_dict=True)
+                vec = outputs.last_hidden_state[:, 0]
+                vec = torch.nn.functional.normalize(vec, p=2, dim=1)
+            return vec[0].detach().cpu().tolist()
         if EMBEDDING_BACKEND == "flagembedding":
             return model.encode([text], batch_size=1, max_length=512)["dense_vecs"][0].tolist()
         return model.encode(text, normalize_embeddings=True).tolist()

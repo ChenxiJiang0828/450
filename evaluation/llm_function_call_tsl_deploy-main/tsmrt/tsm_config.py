@@ -54,8 +54,8 @@ class EmbedConfig(BaseModel):
         description="鏈湴 embedding 璁惧锛歝uda / cpu",
     )
     backend: str = Field(
-        default_factory=lambda: os.getenv("TSMRT_EMBEDDING_BACKEND", "flagembedding"),
-        description="local embedding backend: flagembedding or sentence-transformers",
+        default_factory=lambda: os.getenv("TSMRT_EMBEDDING_BACKEND", "transformers"),
+        description="local embedding backend: transformers, flagembedding, or sentence-transformers",
     )
 
 class DfmConfig(BaseModel):

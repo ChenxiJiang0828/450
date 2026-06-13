@@ -17,9 +17,18 @@ def _load_model():
 
     model_name = tsm_config.embedding.model
     device = tsm_config.embedding.device
-    backend = getattr(tsm_config.embedding, "backend", "flagembedding")
+    backend = getattr(tsm_config.embedding, "backend", "transformers")
     logger.info(f"Loading local embedding model: {model_name} on {device}, backend={backend}")
-    if backend == "flagembedding":
+    if backend == "transformers":
+        import torch
+        from transformers import AutoModel, AutoTokenizer
+
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModel.from_pretrained(model_name).to(device)
+        model.eval()
+        _model = (tokenizer, model, torch.device(device))
+        logger.info("Local transformers embedding model ready")
+    elif backend == "flagembedding":
         from FlagEmbedding import BGEM3FlagModel
 
         _model = BGEM3FlagModel(
@@ -39,7 +48,23 @@ def _load_model():
 
 def _encode_sync(text: str) -> List[float]:
     model = _load_model()
-    backend = getattr(tsm_config.embedding, "backend", "flagembedding")
+    backend = getattr(tsm_config.embedding, "backend", "transformers")
+    if backend == "transformers":
+        import torch
+
+        tokenizer, encoder, device = model
+        encoded = tokenizer(
+            [text],
+            padding=True,
+            truncation=True,
+            max_length=512,
+            return_tensors="pt",
+        ).to(device)
+        with torch.no_grad():
+            outputs = encoder(**encoded, return_dict=True)
+            vec = outputs.last_hidden_state[:, 0]
+            vec = torch.nn.functional.normalize(vec, p=2, dim=1)
+        return vec[0].detach().cpu().tolist()
     if backend == "flagembedding":
         return model.encode([text], batch_size=1, max_length=512)["dense_vecs"][0].tolist()
     vec = model.encode(text, normalize_embeddings=True)

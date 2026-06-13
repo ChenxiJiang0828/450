@@ -26,15 +26,6 @@ python -m pip install -U \
   --trusted-host mirrors.tuna.tsinghua.edu.cn \
   "huggingface_hub>=0.34.0,<1.0"
 
-# The 450 env already has torch/transformers/numpy. Install FlagEmbedding without
-# dependency resolution so pip does not try to rebuild pyarrow/numpy on the server.
-python -m pip install -U --no-deps \
-  -i https://pypi.tuna.tsinghua.edu.cn/simple \
-  --trusted-host pypi.org \
-  --trusted-host files.pythonhosted.org \
-  --trusted-host mirrors.tuna.tsinghua.edu.cn \
-  "FlagEmbedding>=1.2.10"
-
 mkdir -p "$(dirname "${MODEL_DIR}")"
 
 download_with_hf() {
@@ -83,11 +74,18 @@ fi
 
 MODEL_DIR="${MODEL_DIR}" python - <<'PY'
 import os
-from FlagEmbedding import BGEM3FlagModel
+import torch
+from transformers import AutoModel, AutoTokenizer
 
 model_dir = os.environ["MODEL_DIR"]
-model = BGEM3FlagModel(model_dir, use_fp16=False, devices=["cpu"])
-vec = model.encode(["hello"], batch_size=1, max_length=32)["dense_vecs"][0]
+tokenizer = AutoTokenizer.from_pretrained(model_dir)
+model = AutoModel.from_pretrained(model_dir)
+model.eval()
+encoded = tokenizer(["hello"], padding=True, truncation=True, max_length=32, return_tensors="pt")
+with torch.no_grad():
+    outputs = model(**encoded, return_dict=True)
+    vec = outputs.last_hidden_state[:, 0]
+    vec = torch.nn.functional.normalize(vec, p=2, dim=1)[0]
 print("[bge-m3] installed:", model_dir)
 print("[bge-m3] embedding_dim:", len(vec))
 PY
