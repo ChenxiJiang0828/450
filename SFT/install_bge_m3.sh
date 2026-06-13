@@ -24,7 +24,7 @@ python -m pip install -U \
   --trusted-host pypi.org \
   --trusted-host files.pythonhosted.org \
   --trusted-host mirrors.tuna.tsinghua.edu.cn \
-  "huggingface_hub>=0.23.0"
+  "huggingface_hub>=0.34.0,<1.0"
 
 # The 450 env already has torch/transformers/numpy. Install FlagEmbedding without
 # dependency resolution so pip does not try to rebuild pyarrow/numpy on the server.
