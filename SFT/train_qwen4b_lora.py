@@ -62,7 +62,7 @@ def build_text_formatter(tokenizer: AutoTokenizer):
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Fine-tune Qwen with LoRA on car-control SFT data.")
-    parser.add_argument("--model", required=True, help="Base Qwen model path, e.g. /public/.../Qwen3-4B")
+    parser.add_argument("--model", required=True, help="Base Qwen Instruct model path, e.g. /public/.../Qwen3-4B-Instruct-2507")
     parser.add_argument("--train-file", required=True, help="JSONL produced by build_sft_dataset.py")
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--max-seq-length", type=int, default=4096)

@@ -64,7 +64,9 @@ fix_tsm_numpy_faiss() {
   local pip_bin=$1
   local pip_flags
   pip_flags=($(pip_trusted_hosts))
-  local constraints="${ROOT:-/public/home/sjtu_jiangnan/anruitong}/car_control/constraints_numpy126.txt"
+  local script_dir
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  local constraints="${PIP_CONSTRAINT:-${script_dir}/constraints_numpy126.txt}"
 
   echo "[tsm] 锁定 numpy==1.26.4 + faiss-cpu==1.8.0.post1 ..."
   echo "[tsm] 说明: cupy/opencv 可能提示需要 numpy>=2，对 TSM 测评可忽略"

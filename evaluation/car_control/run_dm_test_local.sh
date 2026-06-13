@@ -2,9 +2,10 @@
 # 在 GPU 节点上：启动 vLLM(Qwen3-4B) + 跑 car_control 批量测评
 set -euo pipefail
 
-ROOT=/public/home/sjtu_jiangnan/anruitong
-DEPLOY="${ROOT}/llm_function_call_tsl_deploy-main"
-SCRIPT_DIR="${ROOT}/car_control"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEFAULT_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
+ROOT="${ROOT:-${DEFAULT_ROOT}}"
+DEPLOY="${DEPLOY:-${SCRIPT_DIR}/../llm_function_call_tsl_deploy-main}"
 
 source /public/home/sjtu_jiangnan/anaconda3/etc/profile.d/conda.sh
 conda activate 450

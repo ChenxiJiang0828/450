@@ -2,6 +2,9 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+DEFAULT_ROOT="$(cd "${REPO_ROOT}/.." && pwd)"
+export ROOT="${ROOT:-${DEFAULT_ROOT}}"
 EVAL_CAR_CONTROL_DIR="${EVAL_CAR_CONTROL_DIR:-${SCRIPT_DIR}/../evaluation/car_control}"
 
 if [[ -f "${EVAL_CAR_CONTROL_DIR}/env_qwen3_4b.sh" ]]; then

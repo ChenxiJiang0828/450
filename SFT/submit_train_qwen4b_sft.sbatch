@@ -13,14 +13,16 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${SCRIPT_DIR}"
 mkdir -p logs generated
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+DEFAULT_ROOT="$(cd "${REPO_ROOT}/.." && pwd)"
 
 source /public/home/sjtu_jiangnan/anaconda3/etc/profile.d/conda.sh
 conda activate "${CONDA_ENV:-450}"
 
 python -m pip install -r requirements_sft.txt
 
-export ROOT="${ROOT:-/public/home/sjtu_jiangnan/anruitong}"
-export MODEL_PATH="${MODEL_PATH:-${ROOT}/Qwen3-4B}"
+export ROOT="${ROOT:-${DEFAULT_ROOT}}"
+export MODEL_PATH="${MODEL_PATH:-${ROOT}/Qwen3-4B-Instruct-2507}"
 export OUTPUT_DIR="${OUTPUT_DIR:-${ROOT}/models/qwen4b-car-control-sft-lora}"
 export TRAIN_FILE="${TRAIN_FILE:-${SCRIPT_DIR}/generated/car_control_sft_mix.jsonl}"
 

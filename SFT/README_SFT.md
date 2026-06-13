@@ -55,8 +55,8 @@ TARGET_TOTAL=12000 SINGLE_RATIO=2 MULTI_RATIO=2 NEGATIVE_RATIO=1 RAG_TOPK=20 bas
 
 ```bash
 cd User-Simulator/SFT
-MODEL_PATH=/public/home/sjtu_jiangnan/anruitong/Qwen3-4B \
-OUTPUT_DIR=/public/home/sjtu_jiangnan/anruitong/models/qwen4b-car-control-sft-lora \
+MODEL_PATH=/public/home/sjtu_jiangnan/jiangchenxi/Qwen3-4B-Instruct-2507 \
+OUTPUT_DIR=/public/home/sjtu_jiangnan/jiangchenxi/models/qwen4b-car-control-sft-lora \
 MERGE_AND_SAVE=1 \
 bash run_qwen4b_sft.sh
 ```
@@ -85,10 +85,32 @@ Train LoRA:
 
 ```bash
 cd User-Simulator/SFT
-MODEL_PATH=/public/home/sjtu_jiangnan/anruitong/Qwen3-4B \
-OUTPUT_DIR=/public/home/sjtu_jiangnan/anruitong/models/qwen4b-car-control-sft-lora \
+MODEL_PATH=/public/home/sjtu_jiangnan/jiangchenxi/Qwen3-4B-Instruct-2507 \
+OUTPUT_DIR=/public/home/sjtu_jiangnan/jiangchenxi/models/qwen4b-car-control-sft-lora \
 TRAIN_FILE=$PWD/generated/car_control_sft_mix.jsonl \
 sbatch submit_train_qwen4b_sft.sbatch
+```
+
+With your current server layout:
+
+```text
+/public/home/sjtu_jiangnan/jiangchenxi/
+  Qwen3-4B-Instruct-2507/
+  car-control-qwen4b-sft/
+```
+
+the default `ROOT` and `MODEL_PATH` are already correct. You can submit directly:
+
+```bash
+cd /public/home/sjtu_jiangnan/jiangchenxi/car-control-qwen4b-sft/SFT
+TARGET_TOTAL=100 MAX_SINGLE_CASES=50 MAX_MULTI_CASES=50 MAX_NEGATIVE_ROWS=50 sbatch submit_build_rag_sft.sbatch
+sbatch submit_train_qwen4b_sft.sbatch
+```
+
+If the local BGE embedding model is not at `$ROOT/models/bge-large-zh-v1.5`, override it:
+
+```bash
+TSMRT_EMBEDDING_MODEL=/public/share/model/bge-large-zh-v1.5 sbatch submit_build_rag_sft.sbatch
 ```
 
 If your server copy uses a different home root, override `ROOT`, `MODEL_PATH`, and `OUTPUT_DIR` in the `sbatch` command.
@@ -109,7 +131,7 @@ $OUTPUT_DIR/merged
 Point evaluation vLLM at that merged path:
 
 ```bash
-export QWEN3_4B_MODEL_PATH=/public/home/sjtu_jiangnan/anruitong/models/qwen4b-car-control-sft-lora/merged
+export QWEN3_4B_MODEL_PATH=/public/home/sjtu_jiangnan/jiangchenxi/models/qwen4b-car-control-sft-lora/merged
 export TSM_AGENT_MODEL=Qwen3-4B
 bash User-Simulator/evaluation/car_control/run_dm_test_local.sh --input your_eval.jsonl
 ```

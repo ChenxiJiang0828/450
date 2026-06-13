@@ -2,7 +2,9 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="${ROOT:-/public/home/sjtu_jiangnan/anruitong}"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+DEFAULT_ROOT="$(cd "${REPO_ROOT}/.." && pwd)"
+export ROOT="${ROOT:-${DEFAULT_ROOT}}"
 EVAL_CAR_CONTROL_DIR="${EVAL_CAR_CONTROL_DIR:-${SCRIPT_DIR}/../evaluation/car_control}"
 
 if [[ -f "${EVAL_CAR_CONTROL_DIR}/env_qwen3_4b.sh" ]]; then
@@ -10,7 +12,7 @@ if [[ -f "${EVAL_CAR_CONTROL_DIR}/env_qwen3_4b.sh" ]]; then
   source "${EVAL_CAR_CONTROL_DIR}/env_qwen3_4b.sh"
 fi
 
-MODEL_PATH="${MODEL_PATH:-${ROOT}/Qwen3-4B}"
+MODEL_PATH="${MODEL_PATH:-${ROOT}/Qwen3-4B-Instruct-2507}"
 OUTPUT_DIR="${OUTPUT_DIR:-${ROOT}/models/qwen4b-car-control-sft-lora}"
 TRAIN_FILE="${TRAIN_FILE:-${SCRIPT_DIR}/generated/car_control_sft_mix.jsonl}"
 
