@@ -21,9 +21,9 @@ def _load_model():
     logger.info(f"Loading local embedding model: {model_name} on {device}, backend={backend}")
     if backend == "transformers":
         import torch
-        from transformers import AutoModel, AutoTokenizer
+        from transformers import AutoModel, XLMRobertaTokenizerFast
 
-        tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
+        tokenizer = XLMRobertaTokenizerFast.from_pretrained(model_name)
         model = AutoModel.from_pretrained(model_name).to(device)
         model.eval()
         _model = (tokenizer, model, torch.device(device))

@@ -33,9 +33,9 @@ def _load_local_model():
         print(f"[embedding] loading local model: {EMBEDDING_MODEL} on {EMBEDDING_DEVICE}, backend={EMBEDDING_BACKEND}")
         if EMBEDDING_BACKEND == "transformers":
             import torch
-            from transformers import AutoModel, AutoTokenizer
+            from transformers import AutoModel, XLMRobertaTokenizerFast
 
-            tokenizer = AutoTokenizer.from_pretrained(EMBEDDING_MODEL, use_fast=True)
+            tokenizer = XLMRobertaTokenizerFast.from_pretrained(EMBEDDING_MODEL)
             model = AutoModel.from_pretrained(EMBEDDING_MODEL).to(EMBEDDING_DEVICE)
             model.eval()
             _LOCAL_MODEL = (tokenizer, model, torch.device(EMBEDDING_DEVICE))

@@ -75,10 +75,10 @@ fi
 MODEL_DIR="${MODEL_DIR}" python - <<'PY'
 import os
 import torch
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModel, XLMRobertaTokenizerFast
 
 model_dir = os.environ["MODEL_DIR"]
-tokenizer = AutoTokenizer.from_pretrained(model_dir, use_fast=True)
+tokenizer = XLMRobertaTokenizerFast.from_pretrained(model_dir)
 model = AutoModel.from_pretrained(model_dir)
 model.eval()
 encoded = tokenizer(["hello"], padding=True, truncation=True, max_length=32, return_tensors="pt")
