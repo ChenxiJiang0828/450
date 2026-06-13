@@ -15,19 +15,33 @@ def _load_model():
     if _model is not None:
         return _model
 
-    from sentence_transformers import SentenceTransformer
-
     model_name = tsm_config.embedding.model
     device = tsm_config.embedding.device
-    logger.info(f"Loading local embedding model: {model_name} on {device}")
-    _model = SentenceTransformer(model_name, device=device)
-    dim = _model.get_sentence_embedding_dimension()
-    logger.info(f"Local embedding model ready, dim={dim}")
+    backend = getattr(tsm_config.embedding, "backend", "flagembedding")
+    logger.info(f"Loading local embedding model: {model_name} on {device}, backend={backend}")
+    if backend == "flagembedding":
+        from FlagEmbedding import BGEM3FlagModel
+
+        _model = BGEM3FlagModel(
+            model_name,
+            use_fp16=device.startswith("cuda"),
+            devices=[device],
+        )
+        logger.info("Local FlagEmbedding model ready")
+    else:
+        from sentence_transformers import SentenceTransformer
+
+        _model = SentenceTransformer(model_name, device=device)
+        dim = _model.get_sentence_embedding_dimension()
+        logger.info(f"Local SentenceTransformer model ready, dim={dim}")
     return _model
 
 
 def _encode_sync(text: str) -> List[float]:
     model = _load_model()
+    backend = getattr(tsm_config.embedding, "backend", "flagembedding")
+    if backend == "flagembedding":
+        return model.encode([text], batch_size=1, max_length=512)["dense_vecs"][0].tolist()
     vec = model.encode(text, normalize_embeddings=True)
     return vec.tolist()
 

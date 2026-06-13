@@ -22,6 +22,7 @@ EMBEDDING_MODE = os.getenv("TSMRT_EMBEDDING_MODE", "remote")
 EMBEDDING_URL = os.getenv("TSMRT_EMBEDDING_URL", "http://10.12.7.83:50030").rstrip("/") + "/embed"
 EMBEDDING_MODEL = os.getenv("TSMRT_EMBEDDING_MODEL", "BAAI/bge-m3")
 EMBEDDING_DEVICE = os.getenv("TSMRT_EMBEDDING_DEVICE", "cuda")
+EMBEDDING_BACKEND = os.getenv("TSMRT_EMBEDDING_BACKEND", "flagembedding")
 EMBEDDING_WORKERS = int(os.getenv("TSMRT_EMBEDDING_WORKERS", "20"))
 _LOCAL_MODEL = None
 
@@ -29,11 +30,21 @@ _LOCAL_MODEL = None
 def _load_local_model():
     global _LOCAL_MODEL
     if _LOCAL_MODEL is None:
-        from sentence_transformers import SentenceTransformer
+        print(f"[embedding] loading local model: {EMBEDDING_MODEL} on {EMBEDDING_DEVICE}, backend={EMBEDDING_BACKEND}")
+        if EMBEDDING_BACKEND == "flagembedding":
+            from FlagEmbedding import BGEM3FlagModel
 
-        print(f"[embedding] loading local model: {EMBEDDING_MODEL} on {EMBEDDING_DEVICE}")
-        _LOCAL_MODEL = SentenceTransformer(EMBEDDING_MODEL, device=EMBEDDING_DEVICE)
-        print(f"[embedding] dim={_LOCAL_MODEL.get_sentence_embedding_dimension()}")
+            _LOCAL_MODEL = BGEM3FlagModel(
+                EMBEDDING_MODEL,
+                use_fp16=EMBEDDING_DEVICE.startswith("cuda"),
+                devices=[EMBEDDING_DEVICE],
+            )
+            print("[embedding] local FlagEmbedding model ready")
+        else:
+            from sentence_transformers import SentenceTransformer
+
+            _LOCAL_MODEL = SentenceTransformer(EMBEDDING_MODEL, device=EMBEDDING_DEVICE)
+            print(f"[embedding] dim={_LOCAL_MODEL.get_sentence_embedding_dimension()}")
     return _LOCAL_MODEL
 
 
@@ -41,6 +52,8 @@ def get_embedding(text: str):
     """Return one normalized embedding from local model or remote API."""
     if EMBEDDING_MODE == "local":
         model = _load_local_model()
+        if EMBEDDING_BACKEND == "flagembedding":
+            return model.encode([text], batch_size=1, max_length=512)["dense_vecs"][0].tolist()
         return model.encode(text, normalize_embeddings=True).tolist()
 
     payload = {"inputs": text}

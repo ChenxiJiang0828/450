@@ -26,6 +26,7 @@ python -m pip install -U \
   --trusted-host mirrors.tuna.tsinghua.edu.cn \
   "huggingface_hub>=0.23.0" \
   "modelscope>=1.17.0" \
+  "FlagEmbedding>=1.2.10" \
   "sentence-transformers>=3.0.0"
 
 mkdir -p "$(dirname "${MODEL_DIR}")"
@@ -42,7 +43,8 @@ download_with_hf() {
 
   huggingface-cli download "${HF_MODEL_ID}" \
     --local-dir "${MODEL_DIR}" \
-    --local-dir-use-symlinks False
+    --local-dir-use-symlinks False \
+    --exclude "imgs/*" "onnx/*" "*/.DS_Store" ".DS_Store"
 }
 
 download_with_modelscope() {
@@ -54,11 +56,12 @@ from modelscope.hub.snapshot_download import snapshot_download
 snapshot_download(
     os.environ["MS_MODEL_ID"],
     local_dir=os.environ["MODEL_DIR"],
+    ignore_file_pattern=[r"imgs/.*", r"onnx/.*", r".*\.DS_Store"],
 )
 PY
 }
 
-if [[ -f "${MODEL_DIR}/config.json" || -f "${MODEL_DIR}/modules.json" ]]; then
+if [[ -f "${MODEL_DIR}/config.json" && -f "${MODEL_DIR}/pytorch_model.bin" ]]; then
   echo "[bge-m3] model already exists at ${MODEL_DIR}"
 else
   download_with_hf "https://hf-mirror.com" \
@@ -68,12 +71,13 @@ fi
 
 MODEL_DIR="${MODEL_DIR}" python - <<'PY'
 import os
-from sentence_transformers import SentenceTransformer
+from FlagEmbedding import BGEM3FlagModel
 
 model_dir = os.environ["MODEL_DIR"]
-model = SentenceTransformer(model_dir, device="cpu")
+model = BGEM3FlagModel(model_dir, use_fp16=False, devices=["cpu"])
+vec = model.encode(["hello"], batch_size=1, max_length=32)["dense_vecs"][0]
 print("[bge-m3] installed:", model_dir)
-print("[bge-m3] embedding_dim:", model.get_sentence_embedding_dimension())
+print("[bge-m3] embedding_dim:", len(vec))
 PY
 
 echo "[bge-m3] done"

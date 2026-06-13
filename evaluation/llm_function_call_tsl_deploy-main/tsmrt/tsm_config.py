@@ -53,6 +53,10 @@ class EmbedConfig(BaseModel):
         default_factory=lambda: os.getenv("TSMRT_EMBEDDING_DEVICE", "cuda"),
         description="鏈湴 embedding 璁惧锛歝uda / cpu",
     )
+    backend: str = Field(
+        default_factory=lambda: os.getenv("TSMRT_EMBEDDING_BACKEND", "flagembedding"),
+        description="local embedding backend: flagembedding or sentence-transformers",
+    )
 
 class DfmConfig(BaseModel):
     """DFM 妯″瀷閰嶇疆"""
@@ -180,7 +184,7 @@ class TsmRes(BaseModel):
             "TSMRT_FUNC_RAG_RES",
             str(Path(__file__).parent.parent/"embedding_res")
         ),
-        description="Function瀹氫箟鍚戦噺鏁版嵁搴撹矾寰?
+        description="Function embedding resource path"
     )
 
     func_rag_config: dict = {
@@ -195,7 +199,7 @@ class TsmRes(BaseModel):
 
     func_cluster_subclassify_path: str = Field(
         default_factory=lambda: str(Path(__file__).parent.parent/"function_call_data/function_cluster_subclassify.json"),
-        description="Function瀛愬垎绫昏仛绫绘枃浠惰矾寰?
+        description="Function subclass cluster file path"
     )
 
     @property
@@ -221,7 +225,7 @@ class TsmRes(BaseModel):
         return [] if tsm_config.app.uri == "tsm" else list(_CTSM_FUNC_DEF_DOMAINS.keys())
 
 class TsmConfig(BaseModel):
-    """TSM Runtime 閰嶇疆绫?""
+    """TSM runtime config."""
     app: AppConfig = Field(default_factory=AppConfig, description="搴旂敤閰嶇疆")
     embedding: EmbedConfig = Field(default_factory=EmbedConfig, description="Embedding 閰嶇疆")
     dfm: DfmConfig = Field(default_factory=DfmConfig, description="DFM 妯″瀷閰嶇疆")
