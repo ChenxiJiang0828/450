@@ -75,15 +75,19 @@ fi
 MODEL_DIR="${MODEL_DIR}" python - <<'PY'
 import os
 import torch
-from transformers import AutoModel, XLMRobertaTokenizerFast
+from tokenizers import Tokenizer
+from transformers import AutoModel
 
 model_dir = os.environ["MODEL_DIR"]
-tokenizer = XLMRobertaTokenizerFast.from_pretrained(model_dir)
+tokenizer = Tokenizer.from_file(os.path.join(model_dir, "tokenizer.json"))
+tokenizer.enable_truncation(max_length=32)
 model = AutoModel.from_pretrained(model_dir)
 model.eval()
-encoded = tokenizer(["hello"], padding=True, truncation=True, max_length=32, return_tensors="pt")
+encoded = tokenizer.encode("hello")
+input_ids = torch.tensor([encoded.ids], dtype=torch.long)
+attention_mask = torch.tensor([encoded.attention_mask], dtype=torch.long)
 with torch.no_grad():
-    outputs = model(**encoded, return_dict=True)
+    outputs = model(input_ids=input_ids, attention_mask=attention_mask, return_dict=True)
     vec = outputs.last_hidden_state[:, 0]
     vec = torch.nn.functional.normalize(vec, p=2, dim=1)[0]
 print("[bge-m3] installed:", model_dir)

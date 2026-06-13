@@ -21,9 +21,12 @@ def _load_model():
     logger.info(f"Loading local embedding model: {model_name} on {device}, backend={backend}")
     if backend == "transformers":
         import torch
-        from transformers import AutoModel, XLMRobertaTokenizerFast
+        from pathlib import Path
+        from tokenizers import Tokenizer
+        from transformers import AutoModel
 
-        tokenizer = XLMRobertaTokenizerFast.from_pretrained(model_name)
+        tokenizer = Tokenizer.from_file(str(Path(model_name) / "tokenizer.json"))
+        tokenizer.enable_truncation(max_length=512)
         model = AutoModel.from_pretrained(model_name).to(device)
         model.eval()
         _model = (tokenizer, model, torch.device(device))
@@ -53,15 +56,15 @@ def _encode_sync(text: str) -> List[float]:
         import torch
 
         tokenizer, encoder, device = model
-        encoded = tokenizer(
-            [text],
-            padding=True,
-            truncation=True,
-            max_length=512,
-            return_tensors="pt",
-        ).to(device)
+        encoded = tokenizer.encode(text)
+        input_ids = torch.tensor([encoded.ids], dtype=torch.long, device=device)
+        attention_mask = torch.tensor([encoded.attention_mask], dtype=torch.long, device=device)
         with torch.no_grad():
-            outputs = encoder(**encoded, return_dict=True)
+            outputs = encoder(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                return_dict=True,
+            )
             vec = outputs.last_hidden_state[:, 0]
             vec = torch.nn.functional.normalize(vec, p=2, dim=1)
         return vec[0].detach().cpu().tolist()
