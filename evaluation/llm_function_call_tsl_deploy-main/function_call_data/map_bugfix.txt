@@ -1,0 +1,5 @@
+{"dlg_function":"", "dlg_domain":"", "case":"导航去苏州中心附近的肯德基", "function_result":{"name":"navigateToAddress", "param":{"address":"肯德基", "centerLocation":"苏州中心"}}}
+{"dlg_function":"", "dlg_domain":"", "case":"先去世界之窗再去大梅沙", "function_result":{"name":"navigateToAddress", "param":{"address":"大梅沙", "waypoints":["世界之窗"]}}}
+{"dlg_function":"", "dlg_domain":"", "case":"感觉我的续航快不行了", "function_result":{"name":"mapDeep", "param":{}}}
+{"dlg_function":"", "dlg_domain":"", "case":"设置家的地址", "function_result":{"name":"setHomeAddress", "param":{}}}
+{"dlg_function":"", "dlg_domain":"", "case":"我想去大梅沙", "function_result":{"name":"navigateToAddress", "param":{"address":"大梅沙"}}}

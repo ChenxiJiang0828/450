@@ -1,0 +1,11 @@
+{
+    "scripts": {
+        "commit": "git-cz"
+    },
+    "config": {
+        "commitizen": {
+            "path": "/mnt/lustre/data/Deliver/dev/cloud/ci/npm_install/node_modules/@digitalroute/cz-conventional-changelog-for-jira"
+        }
+    }
+}
+

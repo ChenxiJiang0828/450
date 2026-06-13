@@ -1,0 +1,14 @@
+SFT/generated/
+SFT/__pycache__/
+**/__pycache__/
+*.pyc
+logs/
+*.log
+*.out
+*.err
+checkpoints/
+outputs/
+models/
+hf_cache/
+.venv/
+.env

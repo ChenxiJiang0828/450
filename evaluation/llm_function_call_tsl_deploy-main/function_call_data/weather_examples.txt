@@ -1,0 +1,10 @@
+今天天气怎么样 => queryWeather
+北京明天天气如何 => queryWeather
+东京天气怎么样 => queryWeather
+What is the weather in London => queryWeather
+巴黎现在下不下雨。 => queryWeather
+北京哪天最热 => queryWeatherUnsupported
+哪个城市空气最好 => queryWeatherUnsupported
+北京和上海哪个更热 => queryWeatherUnsupported
+今天适合去公园吗 => queryWeatherUnsupported
+春节天气怎么样。 => queryWeatherUnsupported

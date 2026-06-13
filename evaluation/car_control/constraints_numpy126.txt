@@ -1,0 +1,2 @@
+# TSM 测评依赖 faiss-cpu 1.8，必须锁定 numpy 1.x
+numpy==1.26.4

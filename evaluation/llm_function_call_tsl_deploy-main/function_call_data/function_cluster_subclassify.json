@@ -1,0 +1,251 @@
+{
+  "airConditioning": {
+    "airVentControl": [
+      "controlAirVent",
+      "increaseAirVentHorizontalAngle",
+      "increaseAirVentRightAngle",
+      "setAirVentAdjustMode",
+      "setAirVentHorizontalAngle",
+      "setAirVentHorizontalAngleToCenter",
+      "setAirVentHorizontalAngleToMaxLeft",
+      "setAirVentHorizontalAngleToMaxRight"
+    ],
+    "temperatureControl": [
+      "setTemperatureDirect",
+      "increaseTemperature",
+      "controlTemperatureSync",
+      "decreaseTemperature",
+      "decreaseTemperatureLevel",
+      "increaseTemperatureLevel",
+      "setTemperatureLevel",
+      "setTemperatureToMax",
+      "setTemperatureToMin"
+    ],
+    "windDirectionControl": [
+      "controlIntelligentZoneAirflow",
+      "decreaseWindDirectionAngle",
+      "increaseWindDirectionAngle",
+      "setAirConditionerWindDirection"
+    ],
+    "windSpeedControl": [
+      "setAirConditionerWind",
+      "decreaseWindLevel",
+      "increaseWindLevel",
+      "setWindToMax",
+      "setWindToMin"
+    ]
+  },
+  "ambientLight": {
+    "brightnessControl": [
+      "decreaseAmbientLightBrightness",
+      "increaseAmbientLightBrightness",
+      "setAmbientLightBrightness",
+      "setAmbientLightBrightnessToMax",
+      "setAmbientLightBrightnessToMin"
+    ]
+  },
+  "hud": {
+    "brightnessControl": [
+      "controlHud",
+      "decreaseHudBrightness",
+      "increaseHudBrightness",
+      "setHudBrightness",
+      "setHudBrightnessToMax",
+      "setHudBrightnessToMin"
+    ],
+    "heightControl": [
+      "decreaseHudHeight",
+      "increaseHudHeight",
+      "setHudHeight",
+      "setHudHeightToMax",
+      "setHudHeightToMin"
+    ],
+    "horizontalControl": [
+      "decreaseHudHorizontalPosition",
+      "increaseHudHorizontalPosition",
+      "setHudHorizontalPositionToLeftMax",
+      "setHudHorizontalPositionToRightMax"
+    ],
+    "tiltControl": [
+      "decreaseHudTiltAngle",
+      "increaseHudTiltAngle",
+      "setHudTiltAngle",
+      "setHudTiltAngleToLeftMax",
+      "setHudTiltAngleToMax",
+      "setHudTiltAngleToMin",
+      "setHudTiltAngleToRightMax"
+    ]
+  },
+  "screen": {
+    "brightnessControl": [
+      "decreaseScreenBrightness",
+      "increaseScreenBrightness",
+      "setAutoBrightness",
+      "setBrightnessSync",
+      "setScreenBrightness",
+      "setScreenBrightnessToMax",
+      "setScreenBrightnessToMin"
+    ]
+  },
+  "seat": {
+    "heatingControl": [
+      "controlSeatHeating",
+      "decreaseSeatHeatingLevel",
+      "decreaseSeatHeatingTemperature",
+      "increaseSeatHeatingLevel",
+      "increaseSeatHeatingTemperature",
+      "setSeatHeatingLevel",
+      "setSeatHeatingLevelToMax",
+      "setSeatHeatingLevelToMin",
+      "setSeatHeatingTemperature",
+      "setSeatHeatingTemperatureToMax",
+      "setSeatHeatingTemperatureToMin"
+    ],
+    "lumbarSupport": [
+      "adjustLumbarSupport",
+      "controlLumbarSupport",
+      "decreaseLumbarSupportHeight",
+      "increaseLumbarSupportHeight",
+      "setLumbarSupportHeight",
+      "setLumbarSupportToMax",
+      "setLumbarSupportToMin"
+    ],
+    "massageControl": [
+      "controlSeatMassage",
+      "decreaseSeatMassageIntensity",
+      "increaseSeatMassageIntensity",
+      "setSeatMassageIntensity",
+      "setSeatMassageIntensityToMax",
+      "setSeatMassageIntensityToMin"
+    ],
+    "memoryControl": [
+      "restoreSeatMemory",
+      "saveSeatMemory",
+      "setSeatMemory",
+      "setSeatMemoryIndexToMax",
+      "setSeatMemoryIndexToMin"
+    ],
+    "positionControl": [
+      "decreaseSeatBackrestRange",
+      "decreaseSeatHeightRange",
+      "decreaseSeatSlideRange",
+      "increaseSeatBackrestRange",
+      "increaseSeatHeightRange",
+      "increaseSeatSlideRange",
+      "setSeatBackrestRange",
+      "setSeatBackrestRangeToMax",
+      "setSeatBackrestRangeToMin",
+      "setSeatHeightRange",
+      "setSeatHeightRangeToMax",
+      "setSeatHeightRangeToMin",
+      "setSeatSlideRange",
+      "setSeatSlideRangeToMax",
+      "setSeatSlideRangeToMin"
+    ],
+    "ventilationControl": [
+      "controlSeatVentilation",
+      "decreaseSeatVentilationWind",
+      "increaseSeatVentilationWind",
+      "setSeatVentilationWind",
+      "setSeatVentilationWindToMax",
+      "setSeatVentilationWindToMin"
+    ]
+  },
+  "steeringWheel": {
+    "forwardBackwardControl": [
+      "decreaseSteeringWheelForwardBackwardRange",
+      "increaseSteeringWheelForwardBackwardRange",
+      "setSteeringWheelForwardBackwardRange",
+      "setSteeringWheelForwardBackwardRangeToMax",
+      "setSteeringWheelForwardBackwardRangeToMin"
+    ],
+    "heatingControl": [
+      "controlSteeringWheelHeating",
+      "decreaseSteeringWheelHeatingLevel",
+      "decreaseSteeringWheelHeatingTemperature",
+      "increaseSteeringWheelHeatingLevel",
+      "increaseSteeringWheelHeatingTemperature",
+      "setSteeringWheelHeatingLevel",
+      "setSteeringWheelHeatingLevelToMax",
+      "setSteeringWheelHeatingLevelToMin",
+      "setSteeringWheelHeatingTemperature",
+      "setSteeringWheelHeatingTemperatureToMax",
+      "setSteeringWheelHeatingTemperatureToMin"
+    ],
+    "heightControl": [
+      "decreaseSteeringWheelHeightRange",
+      "increaseSteeringWheelHeightRange",
+      "setSteeringWheelHeightRange",
+      "setSteeringWheelHeightRangeToMax",
+      "setSteeringWheelHeightRangeToMin"
+    ]
+  },
+  "sunroof": {
+    "rangeControl": [
+      "controlSunroof",
+      "decreaseSunroofRange",
+      "increaseSunroofRange",
+      "setSunroofRange",
+      "setSunroofRangeToMax",
+      "setSunroofRangeToMin",
+      "ventilateSunroof"
+    ],
+    "tiltControl": [
+      "controlSunroofTilt",
+      "decreaseSunroofTiltAngle",
+      "increaseSunroofTiltAngle",
+      "setSunroofTiltAngle",
+      "setSunroofTiltAngleToMax",
+      "setSunroofTiltAngleToMin"
+    ]
+  },
+  "sunshade": {
+    "rangeControl": [
+      "controlSunshade",
+      "decreaseSunshadeRange",
+      "increaseSunshadeRange",
+      "setSunshadeRange",
+      "setSunshadeRangeToMax",
+      "setSunshadeRangeToMin"
+    ]
+  },
+  "trunk": {
+    "heightControl": [
+      "decreaseTrunkHeight",
+      "increaseTrunkHeight",
+      "setTrunkHeight",
+      "setTrunkHeightToMax",
+      "setTrunkHeightToMin"
+    ]
+  },
+  "volume": {
+    "headrestSpeakerControl": [
+      "controlHeadrestSpeaker",
+      "setHeadrestMode",
+      "setHeadrestSpeakerVolume",
+      "setHeadrestSpeakerVolumeToMax",
+      "setHeadrestSpeakerVolumeToMin"
+    ],
+    "mainVolumeControl": [
+      "controlMute",
+      "decreaseVolume",
+      "increaseVolume",
+      "setVolume",
+      "setVolumeToMax",
+      "setVolumeToMin"
+    ]
+  },
+  "window": {
+    "windowControl": [
+      "controlCarWindows",
+      "controlWindowVentilation",
+      "decreaseCarWindowRange",
+      "increaseCarWindowRange",
+      "setCarWindowRange",
+      "setCarWindowRangeToMax",
+      "setCarWindowRangeToMin",
+      "setWindowVentilationLevelToMax",
+      "setWindowVentilationLevelToMin"
+    ]
+  }
+}
