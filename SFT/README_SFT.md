@@ -70,6 +70,7 @@ Rebuild the car-control RAG embedding index with local bge-m3 first:
 
 ```bash
 cd /public/home/sjtu_jiangnan/jiangchenxi/car-control-qwen4b-sft/SFT
+MODEL_DIR=/public/home/sjtu_jiangnan/jiangchenxi/models/bge-m3 bash install_bge_m3.sh
 TSMRT_EMBEDDING_MODEL=/path/to/bge-m3 sbatch submit_rebuild_car_control_rag.sbatch
 ```
 
