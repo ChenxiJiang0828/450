@@ -18,12 +18,33 @@ import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # API_URL = "http://llm-text2embedding.gk-internal.prod.duiopen.com/embed"
-API_URL = "http://10.12.7.83:50030/embed"
+EMBEDDING_MODE = os.getenv("TSMRT_EMBEDDING_MODE", "remote")
+EMBEDDING_URL = os.getenv("TSMRT_EMBEDDING_URL", "http://10.12.7.83:50030").rstrip("/") + "/embed"
+EMBEDDING_MODEL = os.getenv("TSMRT_EMBEDDING_MODEL", "BAAI/bge-m3")
+EMBEDDING_DEVICE = os.getenv("TSMRT_EMBEDDING_DEVICE", "cuda")
+EMBEDDING_WORKERS = int(os.getenv("TSMRT_EMBEDDING_WORKERS", "20"))
+_LOCAL_MODEL = None
+
+
+def _load_local_model():
+    global _LOCAL_MODEL
+    if _LOCAL_MODEL is None:
+        from sentence_transformers import SentenceTransformer
+
+        print(f"[embedding] loading local model: {EMBEDDING_MODEL} on {EMBEDDING_DEVICE}")
+        _LOCAL_MODEL = SentenceTransformer(EMBEDDING_MODEL, device=EMBEDDING_DEVICE)
+        print(f"[embedding] dim={_LOCAL_MODEL.get_sentence_embedding_dimension()}")
+    return _LOCAL_MODEL
+
 
 def get_embedding(text: str):
-    """调用 embedding API 返回向量"""
+    """Return one normalized embedding from local model or remote API."""
+    if EMBEDDING_MODE == "local":
+        model = _load_local_model()
+        return model.encode(text, normalize_embeddings=True).tolist()
+
     payload = {"inputs": text}
-    resp = requests.post(API_URL, json=payload, timeout=10)
+    resp = requests.post(EMBEDDING_URL, json=payload, timeout=10)
     resp.raise_for_status()
     data = resp.json()
     return data[0]
@@ -80,7 +101,7 @@ def save_descriptions_to_vector_db(VECTOR_DB_PATH_DES, VECTOR_DB_PATH_QUERY, VEC
         
         pbar = tqdm(total=len(lines_data), desc=hotfix_txt_path+"生成向量库进度（hotfix级别）", unit="条")
         
-        with ThreadPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=EMBEDDING_WORKERS) as executor:
             futures = {executor.submit(process_hotfix_item, item): item for item in lines_data}
             for future in as_completed(futures):
                 result = future.result()
@@ -122,7 +143,7 @@ def save_descriptions_to_vector_db(VECTOR_DB_PATH_DES, VECTOR_DB_PATH_QUERY, VEC
         
         pbar = tqdm(total=len(lines_data), desc=str(jsonl_path) + "生成向量库进度（description级别）", unit="条")
         
-        with ThreadPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=EMBEDDING_WORKERS) as executor:
             futures = {executor.submit(process_description_item, item): item for item in lines_data}
             for future in as_completed(futures):
                 result = future.result()
@@ -159,7 +180,7 @@ def save_descriptions_to_vector_db(VECTOR_DB_PATH_DES, VECTOR_DB_PATH_QUERY, VEC
         
         pbar = tqdm(total=len(lines_data), desc=exmaple_txt_path+"生成向量库进度（query级别）", unit="条")
         
-        with ThreadPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=EMBEDDING_WORKERS) as executor:
             futures = {executor.submit(process_query_item, item): item for item in lines_data}
             for future in as_completed(futures):
                 result = future.result()
@@ -174,7 +195,8 @@ def save_descriptions_to_vector_db(VECTOR_DB_PATH_DES, VECTOR_DB_PATH_QUERY, VEC
     print(f"向量库已保存至: {VECTOR_DB_PATH_QUERY}")
 
 
-support_domains = ["multimedia", "map", "car_control", "air_conditioner", "roomba", "home_control", "calendar", "weather"]
+support_domains = os.getenv("TSMRT_UPDATE_EMBEDDING_DOMAINS", "multimedia,map,car_control,air_conditioner,roomba,home_control,calendar,weather").split(",")
+support_domains = [domain.strip() for domain in support_domains if domain.strip()]
 for support_domain in support_domains:
     VECTOR_DB_PATH_DES = f"./embedding_res/embedding_res_{support_domain}/vector_db_description.json"
     VECTOR_DB_PATH_QUERY = f"./embedding_res/embedding_res_{support_domain}/vector_db_query.json"
