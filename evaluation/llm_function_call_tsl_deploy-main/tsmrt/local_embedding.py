@@ -23,7 +23,7 @@ def _load_model():
         import torch
         from transformers import AutoModel, AutoTokenizer
 
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
         model = AutoModel.from_pretrained(model_name).to(device)
         model.eval()
         _model = (tokenizer, model, torch.device(device))

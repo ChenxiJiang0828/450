@@ -78,7 +78,7 @@ import torch
 from transformers import AutoModel, AutoTokenizer
 
 model_dir = os.environ["MODEL_DIR"]
-tokenizer = AutoTokenizer.from_pretrained(model_dir)
+tokenizer = AutoTokenizer.from_pretrained(model_dir, use_fast=True)
 model = AutoModel.from_pretrained(model_dir)
 model.eval()
 encoded = tokenizer(["hello"], padding=True, truncation=True, max_length=32, return_tensors="pt")

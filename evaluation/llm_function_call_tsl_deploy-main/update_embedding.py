@@ -35,7 +35,7 @@ def _load_local_model():
             import torch
             from transformers import AutoModel, AutoTokenizer
 
-            tokenizer = AutoTokenizer.from_pretrained(EMBEDDING_MODEL)
+            tokenizer = AutoTokenizer.from_pretrained(EMBEDDING_MODEL, use_fast=True)
             model = AutoModel.from_pretrained(EMBEDDING_MODEL).to(EMBEDDING_DEVICE)
             model.eval()
             _LOCAL_MODEL = (tokenizer, model, torch.device(EMBEDDING_DEVICE))
