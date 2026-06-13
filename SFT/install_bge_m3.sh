@@ -24,10 +24,16 @@ python -m pip install -U \
   --trusted-host pypi.org \
   --trusted-host files.pythonhosted.org \
   --trusted-host mirrors.tuna.tsinghua.edu.cn \
-  "huggingface_hub>=0.23.0" \
-  "modelscope>=1.17.0" \
-  "FlagEmbedding>=1.2.10" \
-  "sentence-transformers>=3.0.0"
+  "huggingface_hub>=0.23.0"
+
+# The 450 env already has torch/transformers/numpy. Install FlagEmbedding without
+# dependency resolution so pip does not try to rebuild pyarrow/numpy on the server.
+python -m pip install -U --no-deps \
+  -i https://pypi.tuna.tsinghua.edu.cn/simple \
+  --trusted-host pypi.org \
+  --trusted-host files.pythonhosted.org \
+  --trusted-host mirrors.tuna.tsinghua.edu.cn \
+  "FlagEmbedding>=1.2.10"
 
 mkdir -p "$(dirname "${MODEL_DIR}")"
 
@@ -51,7 +57,13 @@ download_with_modelscope() {
   echo "[bge-m3] trying ModelScope: ${MS_MODEL_ID}"
   MODEL_DIR="${MODEL_DIR}" MS_MODEL_ID="${MS_MODEL_ID}" python - <<'PY'
 import os
-from modelscope.hub.snapshot_download import snapshot_download
+import sys
+
+try:
+    from modelscope.hub.snapshot_download import snapshot_download
+except ImportError:
+    print("[bge-m3] modelscope is not installed; skip ModelScope fallback", file=sys.stderr)
+    raise
 
 snapshot_download(
     os.environ["MS_MODEL_ID"],
