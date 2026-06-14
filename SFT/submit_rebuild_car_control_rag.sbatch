@@ -10,7 +10,7 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "${SLURM_SUBMIT_DIR:-$(pwd)}" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 DEPLOY="${REPO_ROOT}/evaluation/llm_function_call_tsl_deploy-main"
 DEFAULT_ROOT="$(cd "${REPO_ROOT}/.." && pwd)"
