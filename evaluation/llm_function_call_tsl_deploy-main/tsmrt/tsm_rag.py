@@ -517,6 +517,7 @@ class TsmRags:
         deep_functions = self.get_domains_deep_functions(domain_list)
         # domains_functions["智能座舱"].extend(deep_functions)
         # 过滤所有Deep函数
+        domains_functions.setdefault("智能座舱", [])
         domains_functions["智能座舱"] = [func for func in domains_functions["智能座舱"] if func not in deep_functions]
         return domains_functions
 
