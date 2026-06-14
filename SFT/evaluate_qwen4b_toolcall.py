@@ -182,6 +182,9 @@ def summarize(results: list[dict[str, Any]]) -> dict[str, Any]:
             group["name_exact"] += int(name_exact)
             group["name_set_exact"] += int(name_set_exact)
             group["call_exact"] += int(call_exact)
+            group["no_tool_correct"] += int(not has_gold and not has_pred)
+            group["tool_name_exact_on_gold"] += int(has_gold and name_exact)
+            group["tool_call_exact_on_gold"] += int(has_gold and call_exact)
 
     def rates(counter: Counter) -> dict[str, Any]:
         total = counter["total"] or 1
